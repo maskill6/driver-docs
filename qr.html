@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>QR Code Generator</title>
+  <style>
+    body {
+      font-family: sans-serif;
+      padding: 2rem;
+      background-color: #f4f4f4;
+      color: #2d3313;
+    }
+    h1 {
+      color: #2d3313;
+    }
+    label, select {
+      display: block;
+      margin-top: 1rem;
+    }
+    #qrcode {
+      margin-top: 2rem;
+      padding: 1rem;
+      background: white;
+      border: 1px solid #ccc;
+      width: fit-content;
+    }
+    button {
+      margin-top: 1rem;
+      padding: 0.5rem 1rem;
+      background-color: #5b6432;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+    button:hover {
+      background-color: #2d3313;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>Contract QR Code Generator</h1>
+
+  <label for="state">Select State:</label>
+  <select id="state">
+    <option value="">-- Choose a State --</option>
+    <option value="MI">Michigan</option>
+    <option value="NJ">New Jersey</option>
+  </select>
+
+  <label for="contract">Select Contract:</label>
+  <select id="contract" disabled>
+    <option value="">-- Choose a Contract --</option>
+  </select>
+
+  <div id="link-preview"></div>
+  <div id="qrcode"></div>
+  <button id="downloadBtn" style="display:none;">Download QR Code</button>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrious/4.0.2/qrious.min.js"></script>
+  <script>
+    const contractsByState = {
+      MI: ["Sandyland", "Sackett"],
+      NJ: ["Kube-Pak"]
+    };
+
+    const stateSelect = document.getElementById('state');
+    const contractSelect = document.getElementById('contract');
+    const linkPreview = document.getElementById('link-preview');
+    const qrcodeDiv = document.getElementById('qrcode');
+    const downloadBtn = document.getElementById('downloadBtn');
+
+    let qr;
+
+    stateSelect.addEventListener('change', () => {
+      const state = stateSelect.value;
+      contractSelect.innerHTML = '<option value="">-- Choose a Contract --</option>';
+      contractSelect.disabled = true;
+
+      if (contractsByState[state]) {
+        contractsByState[state].forEach(contract => {
+          const opt = document.createElement('option');
+          opt.value = contract;
+          opt.textContent = contract;
+          contractSelect.appendChild(opt);
+        });
+        contractSelect.disabled = false;
+      }
+    });
+
+    contractSelect.addEventListener('change', () => {
+      const state = stateSelect.value;
+      const contract = contractSelect.value;
+      if (!state || !contract) return;
+
+      const anchor = `#${state}-${contract.replace(/\s+/g, '')}`;
+      const url = `${window.location.origin}/index.html${anchor}`;
+
+      linkPreview.innerHTML = `<p><strong>Link:</strong> <a href="${url}" target="_blank">${url}</a></p>`;
+
+      // Generate QR code
+      qr = new QRious({
+        element: document.createElement('canvas'),
+        value: url,
+        size: 250,
+        background: 'white',
+        foreground: '#2d3313'
+      });
+
+      qrcodeDiv.innerHTML = '';
+      qrcodeDiv.appendChild(qr.element);
+      downloadBtn.style.display = 'inline-block';
+    });
+
+    downloadBtn.addEventListener('click', () => {
+      if (!qr) return;
+      const link = document.createElement('a');
+      link.download = `${stateSelect.value}-${contractSelect.value}.png`;
+      link.href = qr.toDataURL();
+      link.click();
+    });
+  </script>
+
+</body>
+</html>
