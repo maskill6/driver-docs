@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Admin Upload Portal</title>
+  <style>
+    body {
+      font-family: sans-serif;
+      background-color: #f4f4f4;
+      color: #2d3313;
+      padding: 2rem;
+    }
+    h1 { color: #2d3313; }
+    .file-section { margin-bottom: 2rem; }
+    .file-list {
+      background: white;
+      border: 1px solid #ccc;
+      border-radius: 10px;
+      padding: 1rem;
+    }
+    .file-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 0.75rem;
+    }
+    .file-item span { flex-grow: 1; }
+    .upload-btn {
+      border: none;
+      background: #5b6432;
+      color: white;
+      padding: 0.4rem 0.75rem;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+    .upload-btn:hover { background: #2d3313; }
+    input[type="file"] { display: none; }
+  </style>
+</head>
+<body>
+  <h1>Driver Document Manager</h1>
+  <p>This page simulates replacing files in the <code>/docs</code> and <code>/thumbs</code> folders. You must manually upload changes to GitHub afterward.</p>
+
+  <div class="file-section">
+    <h2>/docs/ Files</h2>
+    <div class="file-list" id="docs-list"></div>
+  </div>
+
+  <div class="file-section">
+    <h2>/thumbs/ Files</h2>
+    <div class="file-list" id="thumbs-list"></div>
+  </div>
+
+  <script>
+    const docsFiles = ['Sandyland_WH516_EN.pdf', 'Sandyland_WH516_ES.pdf', 'Sackett_WH516_EN.pdf', 'Sackett_WH516_ES.pdf', 'KubePak_WH516_EN.pdf', 'KubePak_WH516_ES.pdf', 'MSPA_EN.pdf', 'MSPA_ES.pdf', 'OSHA_EN.pdf', 'OSHA_ES.pdf', 'MIOSHA_EN.pdf', 'MIOSHA_ES.pdf'];
+    const thumbsFiles = ['sandyland_wh516_en.jpg', 'sandyland_wh516_es.jpg', 'sackett_wh516_en.jpg', 'sackett_wh516_es.jpg', 'kubepak_wh516_en.jpg', 'kubepak_wh516_es.jpg', 'mspa_en.jpg', 'mspa_es.jpg', 'osha_en.jpg', 'osha_es.jpg', 'miosha_en.jpg', 'miosha_es.jpg'];
+
+    function createFileItem(fileName) {
+      const container = document.createElement("div");
+      container.className = "file-item";
+
+      const label = document.createElement("span");
+      label.textContent = fileName;
+
+      const form = document.createElement("form");
+      form.enctype = "multipart/form-data";
+
+      const input = document.createElement("input");
+      input.type = "file";
+      input.name = "file";
+      input.id = "file_" + fileName;
+
+      const button = document.createElement("button");
+      button.className = "upload-btn";
+      button.textContent = "Replace";
+      button.type = "button";
+      button.onclick = () => input.click();
+
+      input.onchange = () => {
+        alert(`You selected a new file to replace: ${fileName}\n\nYou'll need to manually commit this file to GitHub.`);
+      };
+
+      form.appendChild(input);
+      form.appendChild(button);
+
+      container.appendChild(label);
+      container.appendChild(form);
+
+      return container;
+    }
+
+    const docsList = document.getElementById("docs-list");
+    const thumbsList = document.getElementById("thumbs-list");
+
+    docsFiles.forEach(f => docsList.appendChild(createFileItem(f)));
+    thumbsFiles.forEach(f => thumbsList.appendChild(createFileItem(f)));
+  </script>
+</body>
+</html>
