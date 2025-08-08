@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Driver Documents by State</title>
+  <style>
+    body {
+      font-family: sans-serif;
+      padding: 1rem;
+      background-color: #f4f4f4;
+    }
+    h1 {
+      color: #2d3313;
+    }
+    select, .thumbnail {
+      margin-top: 1rem;
+      display: block;
+    }
+    .document-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+      gap: 1rem;
+      margin-top: 1rem;
+    }
+    .thumbnail {
+      background: white;
+      padding: 1rem;
+      border-radius: 10px;
+      border: 1px solid #ccc;
+      text-align: center;
+    }
+    .thumbnail img {
+      width: 100%;
+      height: auto;
+      max-height: 150px;
+    }
+    .thumbnail a {
+      display: block;
+      margin-top: 0.5rem;
+      text-decoration: none;
+      color: #2d3313;
+      font-weight: bold;
+    }
+    .thumbnail span {
+      display: block;
+      font-size: 0.85rem;
+      color: gray;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>Driver Documents</h1>
+
+  <label for="state-select">Select State:</label>
+  <select id="state-select">
+    <option value="">-- Choose a State --</option>
+    <option value="MI">Michigan</option>
+    <option value="NJ">New Jersey</option>
+  </select>
+
+  <div id="contract-wrapper" style="display: none;">
+    <label for="contract-select">Select Contract:</label>
+    <select id="contract-select"></select>
+  </div>
+
+  <div id="documents" class="document-grid"></div>
+
+  <script>
+    const contractsByState = {
+      MI: {
+        "Sandyland": [
+          { name: "WH-516 (English)", file: "Sandyland_WH516_EN.pdf", thumb: "thumbs/sandyland_wh516_en.jpg" },
+          { name: "WH-516 (Spanish)", file: "Sandyland_WH516_ES.pdf", thumb: "thumbs/sandyland_wh516_es.jpg" },
+          { name: "MSPA Poster (English)", file: "MSPA_EN.pdf", thumb: "thumbs/mspa_en.jpg" },
+          { name: "MSPA Poster (Spanish)", file: "MSPA_ES.pdf", thumb: "thumbs/mspa_es.jpg" },
+          { name: "OSHA Poster (English)", file: "OSHA_EN.pdf", thumb: "thumbs/osha_en.jpg" },
+          { name: "OSHA Poster (Spanish)", file: "OSHA_ES.pdf", thumb: "thumbs/osha_es.jpg" },
+          { name: "MIOSHA Poster (English)", file: "MIOSHA_EN.pdf", thumb: "thumbs/miosha_en.jpg" },
+          { name: "MIOSHA Poster (Spanish)", file: "MIOSHA_ES.pdf", thumb: "thumbs/miosha_es.jpg" }
+        ],
+        "Sackett": [
+          { name: "WH-516 (English)", file: "Sackett_WH516_EN.pdf", thumb: "thumbs/sackett_wh516_en.jpg" },
+          { name: "WH-516 (Spanish)", file: "Sackett_WH516_ES.pdf", thumb: "thumbs/sackett_wh516_es.jpg" },
+          { name: "MSPA Poster (English)", file: "MSPA_EN.pdf", thumb: "thumbs/mspa_en.jpg" },
+          { name: "MSPA Poster (Spanish)", file: "MSPA_ES.pdf", thumb: "thumbs/mspa_es.jpg" },
+          { name: "OSHA Poster (English)", file: "OSHA_EN.pdf", thumb: "thumbs/osha_en.jpg" },
+          { name: "OSHA Poster (Spanish)", file: "OSHA_ES.pdf", thumb: "thumbs/osha_es.jpg" },
+          { name: "MIOSHA Poster (English)", file: "MIOSHA_EN.pdf", thumb: "thumbs/miosha_en.jpg" },
+          { name: "MIOSHA Poster (Spanish)", file: "MIOSHA_ES.pdf", thumb: "thumbs/miosha_es.jpg" },
+        ]
+      },
+      NJ: {
+        "Kube-Pak": [
+          { name: "WH-516 (English)", file: "KubePak_WH516_EN.pdf", thumb: "thumbs/kubepak_wh516_en.jpg" },
+          { name: "WH-516 (Spanish)", file: "KubePak_WH516_ES.pdf", thumb: "thumbs/kubepak_wh516_es.jpg" }
+        ]
+      }
+    };
+
+    const stateSelect = document.getElementById('state-select');
+    const contractSelect = document.getElementById('contract-select');
+    const contractWrapper = document.getElementById('contract-wrapper');
+    const documentsDiv = document.getElementById('documents');
+
+    stateSelect.addEventListener('change', () => {
+      const selectedState = stateSelect.value;
+      documentsDiv.innerHTML = '';
+      contractSelect.innerHTML = '';
+      contractWrapper.style.display = 'none';
+
+      if (contractsByState[selectedState]) {
+        contractWrapper.style.display = 'block';
+        const contracts = Object.keys(contractsByState[selectedState]);
+        contracts.forEach(contract => {
+          const option = document.createElement('option');
+          option.value = contract;
+          option.textContent = contract;
+          contractSelect.appendChild(option);
+        });
+      }
+    });
+
+    contractSelect.addEventListener('change', () => {
+      const selectedState = stateSelect.value;
+      const selectedContract = contractSelect.value;
+      const docs = contractsByState[selectedState][selectedContract];
+
+      documentsDiv.innerHTML = '';
+      docs.forEach(doc => {
+        documentsDiv.innerHTML += `
+          <div class="thumbnail">
+            <img src="${doc.thumb}" alt="${doc.name}">
+            <a href="docs/${doc.file}" target="_blank">${doc.name}</a>
+            <span>${doc.file}</span>
+          </div>`;
+      });
+    });
+  </script>
+</body>
+</html>
